@@ -109,7 +109,7 @@
     margin-bottom: 6rem;
     background-image: url(../img/background_1.jpeg);
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: cover;
 }
 
 .typed-cursor {
