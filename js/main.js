@@ -1,27 +1,17 @@
 (function ($) {
     "use strict";
 
-    // Spinner
-    var spinner = function () {
-        setTimeout(function () {
-            if ($('#spinner').length > 0) {
-                $('#spinner').removeClass('show');
-            }
-        }, 1);
-    };
-    spinner();
-    
-    
+
     // Initiate the wowjs
     new WOW().init();
 
 
     // Navbar on scrolling
     $(window).scroll(function () {
-        if ($(this).scrollTop() > 300) {
-            $('.navbar').fadeIn('slow').css('display', 'flex');
+        if ($(this).scrollTop() > 50) {
+            $('.navbar').addClass('navbar-scrolled');
         } else {
-            $('.navbar').fadeOut('slow').css('display', 'none');
+            $('.navbar').removeClass('navbar-scrolled');
         }
     });
 
@@ -121,6 +111,76 @@
         loop: true,
     });
 
-    
+    // Mouse-tracking Parallax in Hero Section (Desktop only)
+    $(document).ready(function() {
+        var $hero = $('#home');
+        var $heroImg = $('.img-hero-container img');
+        var $heroText = $('.hero-text-container');
+        var $heroDots = $('.hero-shape-dots');
+        var $heroCircle = $('.hero-shape-circle');
+
+        if ($hero.length) {
+            $hero.on('mousemove', function(e) {
+                if (window.innerWidth <= 991) return;
+                
+                var width = window.innerWidth;
+                var height = window.innerHeight;
+                
+                // Relative coordinate from center (-0.5 to 0.5)
+                var mouseX = (e.clientX / width) - 0.5;
+                var mouseY = (e.clientY / height) - 0.5;
+
+                // Calculate custom speed for each layer
+                var imgX = mouseX * 25;
+                var imgY = mouseY * 25;
+                var textX = mouseX * -15;
+                var textY = mouseY * -15;
+                var dotsX = mouseX * 45;
+                var dotsY = mouseY * 45;
+                var circleX = mouseX * -35;
+                var circleY = mouseY * -35;
+
+                // Apply translations
+                $heroImg.css('transform', 'translate3d(' + imgX + 'px, ' + imgY + 'px, 0)');
+                $heroText.css('transform', 'translate3d(' + textX + 'px, ' + textY + 'px, 0)');
+                $heroDots.css('transform', 'translate3d(' + dotsX + 'px, ' + dotsY + 'px, 0)');
+                $heroCircle.css('transform', 'translate3d(' + circleX + 'px, ' + circleY + 'px, 0)');
+            });
+
+            // Reset when cursor leaves the hero area
+            $hero.on('mouseleave', function() {
+                $heroImg.css('transform', 'translate3d(0px, 0px, 0)');
+                $heroText.css('transform', 'translate3d(0px, 0px, 0)');
+                $heroDots.css('transform', 'translate3d(0px, 0px, 0)');
+                $heroCircle.css('transform', 'translate3d(0px, 0px, 0)');
+            });
+        }
+    });
+
+    // Contact Form Submission (Interactivity)
+    $('#contactForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var $submitBtn = $(this).find('button[type="submit"]');
+        var $status = $('#formStatus');
+        
+        // Show loading state
+        $submitBtn.prop('disabled', true).html('<i class="fa-solid fa-spinner fa-spin me-2"></i>Envoi en cours...');
+        
+        // Simulate email sending API call
+        setTimeout(function() {
+            $submitBtn.prop('disabled', false).html('<i class="fa-solid fa-paper-plane me-2"></i>Envoyer le message');
+            $status.removeClass('d-none alert-danger').addClass('alert-success-warm').html('<i class="fa-solid fa-circle-check me-2"></i>Merci pour votre message ! Je vous recontacterai très rapidement.');
+            $('#contactForm')[0].reset();
+            
+            // Fade status after 6 seconds
+            setTimeout(function() {
+                $status.fadeOut('slow', function() {
+                    $(this).addClass('d-none').show();
+                });
+            }, 6000);
+        }, 1200);
+    });
+
 })(jQuery);
 
